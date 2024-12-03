@@ -1,6 +1,6 @@
 /*
 *   Copyright (C) 2008 Nicola Gigante <nicola.gigante@gmail.com>
-*   Copyright (C) 2009 Dario Freddi <drf@kde.org>
+*   Copyright (C) 2010 Dario Freddi <drf@kde.org>
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -18,38 +18,46 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .
 */
 
-#ifndef POLICYKIT_BACKEND_H
-#define POLICYKIT_BACKEND_H
-
 #include "AuthBackend.h"
-#include <QHash>
-
-class QByteArray;
 
 namespace KAuth
 {
 
-class PolicyKitBackend : public AuthBackend
+class AuthBackend::Private
 {
-    Q_OBJECT
-    Q_INTERFACES(KAuth::AuthBackend)
-
 public:
-    PolicyKitBackend();
-    virtual void setupAction(const QString&);
-    virtual Action::AuthStatus authorizeAction(const QString&);
-    virtual Action::AuthStatus actionStatus(const QString&);
-    virtual QByteArray callerID() const;
-    virtual ExtraCallerIDVerificationMethod extraCallerIDVerificationMethod() const;
-    virtual bool isCallerAuthorized(const QString &action, QByteArray callerID);
+    Private() {}
+    virtual ~Private() {}
 
-private Q_SLOTS:
-    void checkForResultChanged();
-
-private:
-    QHash<QString, Action::AuthStatus> m_cachedResults;
+    Capabilities capabilities;
 };
 
-} // namespace Auth
+AuthBackend::AuthBackend()
+    : QObject(0)
+    , d(new Private)
+{
 
-#endif
+}
+
+AuthBackend::~AuthBackend()
+{
+}
+
+AuthBackend::Capabilities AuthBackend::capabilities() const
+{
+    return d->capabilities;
+}
+
+void AuthBackend::setCapabilities(AuthBackend::Capabilities capabilities)
+{
+    d->capabilities = capabilities;
+}
+
+bool AuthBackend::actionExists(const QString& action)
+{
+    return false;
+}
+
+} //namespace KAuth
+
+#include "AuthBackend.moc"
