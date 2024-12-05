@@ -1581,7 +1581,7 @@ QString HTTPProtocol::davError( int code /* = -1 */, const QString &_url )
 
   QString url = _url;
   if ( !url.isNull() )
-    url = m_request.url.url();
+    url = m_request.url.prettyUrl();
 
   QString action, errorString;
   int errorCode = ERR_SLAVE_DEFINED;
@@ -3056,7 +3056,7 @@ try_again:
             ; // Ignore error
         } else {
             if (!sendErrorPageNotification()) {
-                error(ERR_INTERNAL_SERVER, m_request.url.url());
+                error(ERR_INTERNAL_SERVER, m_request.url.prettyUrl());
                 return false;
             }
         }
@@ -3072,9 +3072,9 @@ try_again:
         // Tell that we will only get an error page here.
         if (!sendErrorPageNotification()) {
             if (m_request.responseCode == 403)
-                error(ERR_ACCESS_DENIED, m_request.url.url());
+                error(ERR_ACCESS_DENIED, m_request.url.prettyUrl());
             else
-                error(ERR_DOES_NOT_EXIST, m_request.url.url());
+                error(ERR_DOES_NOT_EXIST, m_request.url.prettyUrl());
             return false;
         }
     } else if (m_request.responseCode >= 301 && m_request.responseCode<= 303) {
@@ -3464,7 +3464,7 @@ endParsing:
             KUrl u(m_request.url, locationStr);
             if(!u.isValid())
             {
-                error(ERR_MALFORMED_URL, u.url());
+                error(ERR_MALFORMED_URL, u.prettyUrl());
                 return false;
             }
 
